@@ -1,11 +1,8 @@
 name: Generador de Boletín Legislativo
 
-# Configurar para que corra todos los viernes a las 5:00 PM (Hora de CDMX)
-# La hora en GitHub está en UTC, por lo que las 23:00 UTC son las 17:00 CST.
 on:
   schedule:
     - cron: '0 23 * * 5'
-  # Esto permite ejecutar el script manualmente desde GitHub cuando quieras probarlo
   workflow_dispatch: 
 
 jobs:
@@ -14,10 +11,10 @@ jobs:
 
     steps:
       - name: Descargar el repositorio
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # <-- Actualizado a v4
 
       - name: Configurar Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5 # <-- Actualizado a v5
         with:
           python-version: '3.10'
 
@@ -28,13 +25,12 @@ jobs:
 
       - name: Ejecutar el Agente de Scraping
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          # Ejecuta el script y guarda la salida en un archivo de texto
           python scraper_legislativo.py > boletin_semanal.txt
 
       - name: Guardar Boletín como Artefacto
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4 # <-- ¡Aquí está la solución al error! (v4)
         with:
           name: Boletin-Legislativo
           path: boletin_semanal.txt
